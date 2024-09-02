@@ -2,7 +2,8 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from ..models import User
 from .. import db
-
+from app import login_manager
+from flask_login import login_user,logout_user
 bp = Blueprint('auth', __name__)
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -13,9 +14,14 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, password):
             flash('Login successful!')
+            login_user(user)
             return redirect(url_for('main.index'))
         else:
             flash('Login failed. Check your email and/or password.')
+    return render_template('login.html')
+@bp.route('/logout')
+def logout():
+    logout_user()
     return render_template('login.html')
 
 @bp.route('/register', methods=['POST','GET'])

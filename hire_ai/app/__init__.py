@@ -1,6 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from .config import Config
+from flask_login import LoginManager
+login_manager = LoginManager()
 
 db = SQLAlchemy()
 
@@ -9,6 +11,7 @@ def create_app():
     app.config.from_object(Config)
 
     db.init_app(app)
+    login_manager.init_app(app)
 
     from .routes.auth import bp as auth_bp
     from .routes.main import bp as main_bp
@@ -18,4 +21,4 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-    return app
+    return app,login_manager
